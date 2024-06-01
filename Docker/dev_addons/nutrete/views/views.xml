@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Vistas de Clientes -->
+    <record model="ir.ui.view" id="nutrete.cliente_partner_form">
+      <field name="name">Clientes</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='category_id']" position="before">
+          <field name="is_client" invisible="1"/>
+        </xpath>
+        <xpath expr="//notebook" position="inside">
+          <page name="cliente" string="Cliente" attrs="{'invisible':[('is_client', '=', False)]}">
+            <group>
+              <group>
+                <field name="identificacion"/>
+                <field name="sexo"/>
+                <field name="historial_medico"/>
+                <field name="motivo_consulta"/>
+              </group>
+              <group>
+                <field name="edad"/>
+                <field name="peso_kg"/>
+                <field name="altura_m"/>
+                <field name="indice_grasa_corporal" readonly="1"/>
+              </group>
+              <group>
+                <field name="dietas_ids" context="{'default_cliente_id': id}" readonly="1">
+                  <tree>
+                    <field name="nombre_dieta"/>
+                    <field name="dietista_id"/>
+                    <field name="nutricionista_id"/>
+                    <field name="nivel_actividad"/>
+                    <field name="consumo_calorias"/>
+                  </tree>
+                  <form>
+                    <group>
+                      <field name="nombre_dieta"/>
+                      <field name="dietista_id"/>
+                      <field name="nutricionista_id"/>
+                      <field name="nivel_actividad"/>
+                      <field name="consumo_calorias" readonly="1"/>
+                    </group>
+                  </form>
+                </field>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Vistas de Dietistas -->
+    <record model="ir.ui.view" id="nutrete.dietista_partner_form">
+      <field name="name">Dietistas</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='category_id']" position="before">
+          <field name="is_dietista" invisible="1"/>
+        </xpath>
+        <xpath expr="//notebook" position="inside">
+          <page name="dietista" string="Dietista" attrs="{'invisible':[('is_dietista', '=', False)]}">
+            <group>
+              <group>
+                <field name="identificacion"/>
+                <field name="especialidad_dietista"/>
+                <field name="sexo"/>
+                <field name="historial_medico"/>
+                <field name="motivo_consulta"/>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Vistas de Nutricionistas -->
+    <record model="ir.ui.view" id="nutrete.nutricionista_partner_form">
+      <field name="name">Nutricionista</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='category_id']" position="before">
+          <field name="is_nutricionista" invisible="1"/>
+        </xpath>
+        <xpath expr="//notebook" position="inside">
+          <page name="nutricionista" string="Nutricionista" attrs="{'invisible':[('is_nutricionista', '=', False)]}">
+            <group>
+              <group>
+                <field name="identificacion"/>
+                <field name="especialidad_nutricionista"/>
+                <field name="sexo"/>
+                <field name="historial_medico"/>
+                <field name="motivo_consulta"/>
+              </group>
+            </group>
+          </page>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Vistas de Revisiones -->
+    <record model="ir.ui.view" id="nutrete.revision_tree_view">
+      <field name="name">Revisiones</field>
+      <field name="model">nutrete.revision</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="nombre_revision"/>
+          <field name="fecha_revision"/>
+          <field name="dieta_id"/>
+          <field name="peso_actual"/>
+          <field name="comentarios_revision"/>
+          <field name="evolucion_revision"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- Vistas de Talleres -->
+    <record model="ir.ui.view" id="nutrete.taller_tree_view">
+      <field name="name">Talleres y charlas</field>
+      <field name="model">nutrete.taller</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="nombre_taller"/>
+          <field name="fecha_taller"/>
+          <field name="enlace_taller"/>
+          <field name="profesionales_ids"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="nutrete.taller_form_view" model="ir.ui.view">
+      <field name="name">nutrete.taller.form</field>
+      <field name="model">nutrete.taller</field>
+      <field name="arch" type="xml">
+        <form string="Registro de los talleres y charlas">
+          <sheet>
+            <group>
+              <group>
+                <field name="nombre_taller"/>
+                <field name="fecha_taller"/>
+                <field name="enlace_taller"/>
+              </group>
+              <group>
+                <field name="profesionales_ids" 
+                  domain="['|', ('is_dietista','=',True), ('is_nutricionista','=',True)]" 
+                  context="{'form_view_ref':'nutrete.dietista_partner_form', 'default_is_dietista':True}"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Vistas de Dietas -->
+    <record model="ir.ui.view" id="nutrete.dieta_tree_view">
+      <field name="name">Dietas</field>
+      <field name="model">nutrete.dieta</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="nombre_dieta"/>
+          <field name="cliente_id"/>
+          <field name="revisiones_ids"/>
+          <field name="dietista_id"/>
+          <field name="nutricionista_id"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="nutrete.dieta_form_view" model="ir.ui.view">
+      <field name="name">nutrete.dieta.form</field>
+      <field name="model">nutrete.dieta</field>
+      <field name="arch" type="xml">
+        <form string="Registro de las dietas">
+          <sheet>
+            <group>
+              <group>
+                <field name="nombre_dieta"/>
+                <field name="dietista_id" 
+                  domain="[('is_dietista','=',True)]" 
+                  context="{'form_view_ref':'nutrete.dietista_partner_form', 'default_is_dietista':True}"/>
+                <field name="nutricionista_id" 
+                  domain="[('is_nutricionista','=',True)]"
+                  context="{'form_view_ref':'nutrete.nutricionista_partner_form', 'default_is_nutricionista':True}"/>
+                <field name="cliente_id" 
+                  domain="[('is_client','=',True)]"
+                  context="{'form_view_ref':'nutrete.cliente_partner_form', 'default_is_client':True}"/>
+                <field name="nivel_actividad"/>
+                <field name="consumo_calorias" readonly="1"/>
+              </group>
+              <group>
+                <field name="revisiones_ids" context="{'default_dieta_id': id}">
+                  <tree>
+                    <field name="nombre_revision"/>
+                    <field name="fecha_revision"/>
+                    <field name="peso_actual"/>
+                    <field name="comentarios_revision"/>
+                    <field name="evolucion_revision"/>
+                  </tree>
+                  <form>
+                    <group>
+                      <field name="nombre_revision"/>
+                      <field name="fecha_revision"/>
+                      <field name="peso_actual"/>
+                      <field name="comentarios_revision"/>
+                      <field name="evolucion_revision"/>
+                    </group>
+                  </form>
+                </field>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Acciones -->
+    <record model="ir.actions.act_window" id="nutrete.action_revisiones_window">
+      <field name="name">Revisiones</field>
+      <field name="res_model">nutrete.revision</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="nutrete.action_talleres_window">
+      <field name="name">Talleres y charlas</field>
+      <field name="res_model">nutrete.taller</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="nutrete.action_dietas_window">
+      <field name="name">Dietas</field>
+      <field name="res_model">nutrete.dieta</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="nutrete.action_cliente_window">
+      <field name="name">Clientes</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('is_client', '=', True)]</field>
+      <field name="context">{'default_is_client':True}</field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_cliente_tree">
+      <field name="sequence" eval="1"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="base.view_partner_tree"/>
+      <field name="act_window_id" ref="nutrete.action_cliente_window"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_cliente_form">
+      <field name="sequence" eval="2"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="nutrete.cliente_partner_form"/>
+      <field name="act_window_id" ref="nutrete.action_cliente_window"/>
+    </record>
+
+    <record model="ir.actions.act_window" id="nutrete.action_dietista_window">
+      <field name="name">Dietistas</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('is_dietista', '=', True)]</field>
+      <field name="context">{'default_is_dietista':True}</field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_dietista_tree">
+      <field name="sequence" eval="1"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="base.view_partner_tree"/>
+      <field name="act_window_id" ref="nutrete.action_dietista_window"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_dietista_form">
+      <field name="sequence" eval="2"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="nutrete.dietista_partner_form"/>
+      <field name="act_window_id" ref="nutrete.action_dietista_window"/>
+    </record>
+
+    <record model="ir.actions.act_window" id="nutrete.action_nutricionista_window">
+      <field name="name">Nutricionistas</field>
+      <field name="res_model">res.partner</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('is_nutricionista', '=', True)]</field>
+      <field name="context">{'default_is_nutricionista':True}</field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_nutricionista_tree">
+      <field name="sequence" eval="1"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="base.view_partner_tree"/>
+      <field name="act_window_id" ref="nutrete.action_nutricionista_window"/>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="nutrete.action_view_nutricionista_form">
+      <field name="sequence" eval="2"/>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="nutrete.nutricionista_partner_form"/>
+      <field name="act_window_id" ref="nutrete.action_nutricionista_window"/>
+    </record>
+
+    <!-- Menús -->
+    <menuitem name="Nutrete" id="nutrete.menu_root"/>
+    <menuitem name="Usuarios" id="nutrete.menu_1" parent="nutrete.menu_root"/>
+    <menuitem name="Gestión" id="nutrete.menu_2" parent="nutrete.menu_root"/>
+
+    <menuitem name="Clientes" id="nutrete.menu_1_clientes_list" parent="nutrete.menu_1"
+              action="nutrete.action_cliente_window"/>
+    <menuitem name="Dietistas" id="nutrete.menu_1_dietistas_list" parent="nutrete.menu_1"
+              action="nutrete.action_dietista_window"/>
+    <menuitem name="Nutricionistas" id="nutrete.menu_1_nutricionistas_list" parent="nutrete.menu_1"
+              action="nutrete.action_nutricionista_window"/>
+    <menuitem name="Revisiones" id="nutrete.menu_2_revisiones_list" parent="nutrete.menu_2"
+              action="nutrete.action_revisiones_window"/>
+    <menuitem name="Talleres y Charlas" id="nutrete.menu_2_talleres_list" parent="nutrete.menu_2"
+              action="nutrete.action_talleres_window"/>
+    <menuitem name="Dietas" id="nutrete.menu_2_dietas_list" parent="nutrete.menu_2"
+              action="nutrete.action_dietas_window"/>
+  </data>
+</odoo>

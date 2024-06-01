@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_nutrete_revision,nutrete.revision,model_nutrete_revision,base.group_user,1,1,1,1
+access_nutrete_taller,nutrete.taller,model_nutrete_taller,base.group_user,1,1,1,1
+access_nutrete_dieta,nutrete.dieta,model_nutrete_dieta,base.group_user,1,1,1,1
